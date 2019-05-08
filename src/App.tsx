@@ -1,9 +1,11 @@
 import { Player, SourceConfig } from 'bitmovin-player';
-import { UIFactory } from 'bitmovin-player-ui';
+import { UIManager } from 'bitmovin-player-ui';
 import React from 'react';
 import './App.css';
+import { createUIContainer } from './bitmovinUI';
 
 class App extends React.Component<any, any> {
+  playerUI!: UIManager;
   playerConfig = {
     key: '4030a021-73c5-48f7-b90f-7e36107e1391',
     ui: false,
@@ -24,29 +26,32 @@ class App extends React.Component<any, any> {
     }
   };
 
-  // if (this.smil.imageStream) {
-  //   const url = new URL(this.smil.imageStream.src);
-  //   const imageStream = `//fs.telecinecloud.com${url.pathname.replace('fs', 'vtt')}`;
-  //   // const imageStream =
-  //   // 	'https://bitmovin-a.akamaihd.net/content/MI201109210084_1/thumbnails/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.vtt';
-  //   this.playerSource.thumbnailTrack = {
-  //     url: imageStream
-  //   };
-  // }
-
   componentDidMount(): void {
+    const script = document.createElement('script');
+
+    script.src = '/bitmovin/bitmovinplayer-ui.js';
+    script.type = 'text/javascript';
+    script.async = true;
+
+    document.body.appendChild(script);
+
     this.setupPlayer();
   }
 
   setupPlayer() {
     const player = new Player(document.getElementById('player')!, this.playerConfig);
 
-    const playerUI = UIFactory.buildDefaultUI(player);
+    const translations = {
+      bitmovin_ui_video_quality: 'bitmovin_ui_video_quality',
+      bitmovin_ui_video_speed: 'bitmovin_ui_video_speed',
+      bitmovin_ui_audio_quality: 'bitmovin_ui_audio_quality'
+    };
+    this.playerUI = new UIManager(player, createUIContainer(translations));
+    // this.playerUI = UIFactory.buildDefaultUI(player);
 
     player.load(this.playerSource).then(
       () => {
         this.setState({
-          ...this.state,
           player
         });
         console.log('Successfully loaded source');
@@ -60,7 +65,7 @@ class App extends React.Component<any, any> {
   render() {
     return (
       <div>
-        <h1>stuff</h1>
+        <h1>Not working :(</h1>
         <div id="player" />
       </div>
     );
