@@ -1,10 +1,13 @@
 import { Player, SourceConfig } from 'bitmovin-player';
+import { UIManager } from 'bitmovin-player-ui';
 import React from 'react';
 import './App.css';
+import { createUIContainer } from './bitmovinUI';
 
 class App extends React.Component<any, any> {
+  playerUI!: UIManager;
   playerConfig = {
-    key: '4030a021-73c5-48f7-b90f-7e36107e1391',
+    key: '',
     ui: false,
     location: {
       ui: '/bitmovin/bitmovinplayer-ui.js',
@@ -29,12 +32,11 @@ class App extends React.Component<any, any> {
     script.src = '/bitmovin/bitmovinplayer-ui.js';
     script.type = 'text/javascript';
     script.async = true;
-
-    document.body.appendChild(script);
-
     script.onload = () => {
       this.setupPlayer();
     };
+
+    document.body.appendChild(script);
   }
 
   setupPlayer() {
@@ -45,9 +47,9 @@ class App extends React.Component<any, any> {
       bitmovin_ui_video_speed: 'bitmovin_ui_video_speed',
       bitmovin_ui_audio_quality: 'bitmovin_ui_audio_quality'
     };
-    // this.playerUI = new UIManager(player, createUIContainer(translations));
-    const bitmovin = (window as any).bitmovin;
-    bitmovin.playerui.UIFactory.buildDefaultUI(player, {});
+    this.playerUI = new UIManager(player, createUIContainer(translations));
+    // const bitmovin = (window as any).bitmovin;
+    // bitmovin.playerui.UIFactory.buildDefaultUI(player, {});
 
     player.load(this.playerSource).then(
       () => {
